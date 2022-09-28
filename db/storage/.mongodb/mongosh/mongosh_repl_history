@@ -1,0 +1,16 @@
+db.onepunchman_src.renameCollection('pages')
+use('default')
+db.createUser({user: "admin",pwd: "8bM4ilCDhgCj",roles: [{ role: "readWrite", db: "default" }]})
+use('admin')
+use('default')
+db.create('default')
+db
+ви
+use('admin')
+use(admin)pwd: "8bM4ilCDhgCj", roles: [{ role: "readWrite", db: "default" }] })
+use('admin')
+use(admin) "admin",
+    {
+db.createUser(
+use('admin')
+use(admin)

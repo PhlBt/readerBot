@@ -1,0 +1,99 @@
+version: '3.7'
+
+services:
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - ./db/storage:/data/db
+      - ./docker/services/mongodb/conf.d/mongodb.conf.template:/etc/mongod.conf
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  browser:
+    build:
+      context: .
+      dockerfile: ./docker/services/nodejs/Dockerfile
+    image: browser
+    container_name: browser
+    working_dir: ${DOCKER_PROJECT_PATCH}
+    ports:
+      - 6666:6666
+    volumes:
+      - ${DOCKER_PROJECT_ROOT}:${DOCKER_PROJECT_PATCH}
+      - ./docker/scripts/nodejs.sh:/scripts/nodejs.sh
+    environment:
+      - ROOT=${DOCKER_NODEJS_ROOT}
+      - NPM_COMMAND=${DOCKER_NODEJS_NPM_COMMAND}
+    command: /scripts/nodejs.sh
+    depends_on:
+      - mongo
+
+  bot:
+    build:
+      context: .
+      dockerfile: ./docker/services/nodejs_bot/Dockerfile
+    image: bot
+    container_name: bot
+    working_dir: ${DOCKER_PROJECT_PATCH}
+    ports:
+      - 4000:4000
+    volumes:
+      - ${DOCKER_PROJECT_ROOT}:${DOCKER_PROJECT_PATCH}
+      - ./docker/scripts/nodejs.sh:/scripts/nodejs.sh
+    environment:
+      - ROOT=${DOCKER_NODEJS_BOT_ROOT}
+      - NPM_COMMAND=${DOCKER_NODEJS_BOT_NPM_COMMAND}
+    command: /scripts/nodejs.sh
+    depends_on:
+      - mongo
+
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/services/nodejs_bot/Dockerfile
+    image: web
+    container_name: web
+    working_dir: ${DOCKER_PROJECT_PATCH}
+    labels:
+      - traefik.http.routers.nodejs_web.rule=Host(`ioun.ru`)
+      - traefik.http.routers.nodejs_web.tls=true
+      - traefik.http.routers.nodejs_web.tls.certresolver=myresolver
+    ports:
+      - 3000:3000
+    volumes:
+      - ${DOCKER_PROJECT_ROOT}:${DOCKER_PROJECT_PATCH}
+      - ./docker/scripts/nodejs.sh:/scripts/nodejs.sh
+    environment:
+      - ROOT=${DOCKER_NODEJS_WEB_ROOT}
+      - NPM_COMMAND=${DOCKER_NODEJS_WEB_NPM_COMMAND}
+    command: /scripts/nodejs.sh
+    depends_on:
+      - mongo
+
+  rproxy:
+    image: traefik:v2.8
+      # --log.level=DEBUG 
+      # --certificatesresolvers.myresolver.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # Тестовый серт
+    container_name: rproxy
+    command: 
+      --log.level=DEBUG 
+      --api.insecure=true 
+      --providers.docker
+      --entrypoints.web.address=:80
+      --entrypoints.websecure.address=:443
+      --certificatesresolvers.myresolver.acme.email=ph@borbot.ru
+      --certificatesresolvers.myresolver.acme.storage=acme.json
+      --certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./acme.json:/acme.json

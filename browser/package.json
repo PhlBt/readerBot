@@ -1,0 +1,19 @@
+{
+  "name": "browser",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "serve": "nodemon index.js"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.1",
+    "form-data": "^4.0.0",
+    "mongodb": "^4.9.0",
+    "node-fetch": "^2.6.7",
+    "puppeteer": "^16.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
