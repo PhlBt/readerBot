@@ -78,11 +78,10 @@ services:
   rproxy:
     image: traefik:v2.8
       # --log.level=DEBUG 
+      # --api.insecure=true 
       # --certificatesresolvers.myresolver.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # Тестовый серт
     container_name: rproxy
     command: 
-      --log.level=DEBUG 
-      --api.insecure=true 
       --providers.docker
       --entrypoints.web.address=:80
       --entrypoints.websecure.address=:443
@@ -92,7 +91,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
+      # - "8080:8080"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock:ro

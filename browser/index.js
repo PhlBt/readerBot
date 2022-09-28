@@ -331,7 +331,7 @@ const Thumb = class {
   }
 }
 
-new Manga_Obj('https://mintmanga.live/chelovek_benzopila__A5327')
+// new Manga_Obj('https://mintmanga.live/chelovek_benzopila__A5327')
 
 
 // const dev = async () => {
