@@ -1,17 +1,17 @@
 <template>
   <v-app dark>
-    <v-navigation-drawer width="90%" v-model="show" absolute right>
+    <v-navigation-drawer width="calc(100% - 52px)" v-model="show" absolute right>
       <v-list :height="height" class="mango-list">
         <v-list-item
           v-for="item in menu"
-          :class="[{ 'mango-current': item._id == current }]"
+          :class="[{ 'mango-current': item._id == current._id }]"
           :key="item._id"
-          :disabled="item._id == current"
+          :disabled="item._id == current._id"
           @click="$router.push(item._id)"
         >
           <v-list-item-icon class="mr-4">
             <v-icon>{{
-              current == item._id
+              current.sort >= item.sort
                 ? "mdi-check-circle-outline"
                 : "mdi-checkbox-blank-circle-outline"
             }}</v-icon>
@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     showDrawer() {
-      if (!this.show) document.querySelector('.mango-current')?.scrollIntoView(false)
+      if (!this.show) document.querySelector('.mango-current')?.scrollIntoView()
       this.show = !this.show
     }
   },
@@ -57,7 +57,7 @@ export default {
       return this.$store.getters.title;
     },
     height() {
-      return window.innerHeight;
+      return window.innerHeight-20
     },
   },
 };
@@ -66,6 +66,7 @@ export default {
 <style>
 .mango-list {
   overflow-y: auto;
+  margin: 10px 0;
 }
 .mango-title {
   width: 100%;

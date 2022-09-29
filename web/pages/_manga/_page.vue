@@ -77,7 +77,7 @@ export default {
     this.next = next;
 
     this.$store.commit('title', this.current.title)
-    this.$store.commit('current', this.current._id)
+    this.$store.commit('current', this.current)
   },
   beforeMount() {
     this.$store.dispatch("requestMenu", this.params.manga);

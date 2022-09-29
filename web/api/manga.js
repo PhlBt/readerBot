@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv'
 const env = dotenv.config({ path: '../.env' }).parsed
 const db = new MongoClient(env.MONGO_URL).db('default')
 
-const getMenu = async ({ id }) => await db.collection('pages').find({ manga: new ObjectId(id) }).project({ _id: 1, title: 1, sort: 1 }).sort({ sort: -1 }).toArray()
+const getMenu = async ({ id }) => await db.collection('pages').find({ manga: new ObjectId(id) }).project({ _id: 1, title: 1, sort: 1 }).sort({ sort: 1 }).toArray()
 
 const getPage = async ({ id, user_id, manga_id }) => {
   let _id = id
