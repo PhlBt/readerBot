@@ -5,21 +5,11 @@
       <v-btn @click="$router.go()">Обновить страницу</v-btn>
     </v-card>
     <div v-else>
-      <v-card v-if="menu.length" class="px-2 d-flex justify-center">
-        <v-select
-          :value="this.current._id"
-          :items="menu"
-          item-value="_id"
-          item-text="title"
-          outlined
-          @input="$router.push($event)"
-        />
-      </v-card>
       <div v-if="img.length" class="pa-2">
         <template v-for="item in img">
           <img
             v-if="isImg(item.src)"
-            class="w-100"
+            class="w-100 min-height"
             :key="'img_' + item.sort"
             :src="item.src"
             :alt="current.title"
@@ -63,9 +53,6 @@ export default {
     };
   },
   computed: {
-    menu() {
-      return this.$store.getters.menu;
-    },
     img() {
       return this.images.sort((a, b) => a.sort - b.sort);
     },
@@ -88,10 +75,12 @@ export default {
     this.images = current.images.src;
     delete this.current.images;
     this.next = next;
+
+    this.$store.commit('title', this.current.title)
+    this.$store.commit('current', this.current._id)
   },
   beforeMount() {
-    if (!this.menu.length)
-      this.$store.dispatch("requestMenu", this.params.manga);
+    this.$store.dispatch("requestMenu", this.params.manga);
 
     const initData = new URLSearchParams(Telegram.WebApp.initData);
     this.user = initData.has("user")
@@ -116,6 +105,9 @@ body {
 }
 .w-100 {
   width: 100%;
+}
+.min-height {
+  min-height: 144px;
 }
 .v-sheet.v-card {
   border-radius: 0;
