@@ -48,7 +48,7 @@ module.exports = class {
           (manga.history.length)
             ? {
                 text: this.btn.continue,
-                web_app: { url: `https://${process.env.DOCKER_PROJECT_DOMAIN}/${manga._id}/${manga.history[0].current_id}` }
+                web_app: { url: `https://${process.env.DOCKER_PROJECT_DOMAIN}/${manga._id}/restore` }
               }
             : {
                 text: this.btn.read,
