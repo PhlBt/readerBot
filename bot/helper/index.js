@@ -29,6 +29,7 @@ const Waiter = class {
 }
 
 const createPagination = ({ count, limit, page, entity }) => {
+  page = parseInt(page)
   const show = count > limit
   const text = show ? `\n\nСтраница ${page + 1} из ${Math.ceil(count / limit)}` : ''
   const startIndex = page * limit

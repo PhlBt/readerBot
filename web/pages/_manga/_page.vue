@@ -7,7 +7,7 @@
     <div v-else>
       <v-card v-if="menu.length" class="px-2 d-flex justify-center">
         <v-select
-          :value="params.page"
+          :value="this.current._id"
           :items="menu"
           item-value="_id"
           item-text="title"
@@ -76,7 +76,11 @@ export default {
   },
   async fetch() {
     const { current, next } = await this.$axios
-      .post(`manga/getPage`, { id: this.params.page })
+      .post(`manga/getPage`, {
+        id: this.params.page,
+        user_id: this.user.id,
+        manga_id: this.params.manga,
+      })
       .then((res) => res.data);
 
     this.error = !!current.id;
@@ -84,13 +88,6 @@ export default {
     this.images = current.images.src;
     delete this.current.images;
     this.next = next;
-
-    if (this.user)
-      this.$axios.post(`manga/setHistory`, {
-        user: this.user.id,
-        manga: this.current.manga,
-        current: { _id: this.current._id, sort: this.current.sort },
-      });
   },
   beforeMount() {
     if (!this.menu.length)

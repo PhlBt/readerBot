@@ -89,7 +89,7 @@ module.exports = class {
         if (pagination.show) inline_keyboard.push(pagination.button)
         inline_keyboard.push([{ text: this.btn.back, callback_data: 'start@update' }])
 
-        this.bot.editMessageText(this.text.read, { message_id: msg.message.message_id, chat_id: this.user.id, reply_markup: { inline_keyboard } })
+        this.bot.editMessageText(this.text.read+pagination.text, { message_id: msg.message.message_id, chat_id: this.user.id, reply_markup: { inline_keyboard } })
       },
       popular: async ({ msg, command }) => {
         const pagination = createPagination({
@@ -106,7 +106,7 @@ module.exports = class {
         if (pagination.show) inline_keyboard.push(pagination.button)
         inline_keyboard.push([{ text: this.btn.back, callback_data: 'start@update' }])
 
-        this.bot.editMessageText(this.text.popular, { message_id: msg.message.message_id, chat_id: this.user.id, reply_markup: { inline_keyboard } })
+        this.bot.editMessageText(this.text.popular+pagination.text, { message_id: msg.message.message_id, chat_id: this.user.id, reply_markup: { inline_keyboard } })
       },
       new: async ({ msg, command }) => {
         const pagination = createPagination({
@@ -123,7 +123,7 @@ module.exports = class {
         if (pagination.show) inline_keyboard.push(pagination.button)
         inline_keyboard.push([{ text: this.btn.back, callback_data: 'start@update' }])
 
-        this.bot.editMessageText(this.text.new, { message_id: msg.message.message_id, chat_id: this.user.id, reply_markup: { inline_keyboard } })
+        this.bot.editMessageText(this.text.new+pagination.text, { message_id: msg.message.message_id, chat_id: this.user.id, reply_markup: { inline_keyboard } })
       },
       searchName: msg => {
         console.log('searchName', msg);
