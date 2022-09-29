@@ -60,9 +60,10 @@ services:
     container_name: web
     working_dir: ${DOCKER_PROJECT_PATCH}
     labels:
-      - traefik.http.routers.nodejs_web.rule=Host(`ioun.ru`)
-      - traefik.http.routers.nodejs_web.tls=true
-      - traefik.http.routers.nodejs_web.tls.certresolver=myresolver
+      - traefik.enable=true
+      - traefik.http.routers.nodejs_web.rule=Host(`dev.loc`)
+      # - traefik.http.routers.nodejs_web.tls=true
+      # - traefik.http.routers.nodejs_web.tls.certresolver=myresolver
     ports:
       - 3000:3000
     volumes:
@@ -77,17 +78,17 @@ services:
 
   rproxy:
     image: traefik:v2.8
-      # --log.level=DEBUG 
       # --api.insecure=true 
       # --certificatesresolvers.myresolver.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # Тестовый серт
     container_name: rproxy
     command: 
+      --log.level=DEBUG 
       --providers.docker
       --entrypoints.web.address=:80
-      --entrypoints.websecure.address=:443
-      --certificatesresolvers.myresolver.acme.email=ph@borbot.ru
-      --certificatesresolvers.myresolver.acme.storage=acme.json
-      --certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web
+      # --entrypoints.websecure.address=:443
+      # --certificatesresolvers.myresolver.acme.email=ph@borbot.ru
+      # --certificatesresolvers.myresolver.acme.storage=acme.json
+      # --certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web
     ports:
       - "80:80"
       - "443:443"
