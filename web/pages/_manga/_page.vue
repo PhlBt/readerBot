@@ -124,7 +124,7 @@ export default {
     const initData = new URLSearchParams(Telegram.WebApp.initData);
     this.user = initData.has("user")
       ? JSON.parse(initData.get("user")) || false
-      : { id: 214457275 }; // : false;
+      : false; // : { id: 214457275 };
 
     if (!this.user) this.$router.push("/404");
   },
