@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-card v-if="error" class="pa-4 ma-2 d-flex flex-column">
+    <div v-if="!current" class="loader">
+      <v-progress-circular :size="70" :width="7" color="grey" indeterminate />
+    </div>
+    <v-card v-else-if="error" class="pa-4 ma-2 d-flex flex-column">
       <p class="text-center">При загрузке произошла ошибка</p>
       <v-btn @click="$router.go()">Обновить страницу</v-btn>
     </v-card>
@@ -82,7 +85,7 @@ export default {
       current: false,
       next: false,
       user: false,
-      params: {}
+      params: {},
     };
   },
   computed: {
@@ -146,6 +149,12 @@ export default {
 }
 .min-height {
   min-height: 144px;
+}
+.loader {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .mango-list {
   overflow-y: auto;
