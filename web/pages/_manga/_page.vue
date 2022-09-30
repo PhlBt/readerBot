@@ -5,6 +5,38 @@
       <v-btn @click="$router.go()">Обновить страницу</v-btn>
     </v-card>
     <div v-else>
+      <v-navigation-drawer
+        width="calc(100% - 52px)"
+        v-model="show"
+        touchless
+        absolute
+        right
+      >
+        <v-list :height="height" class="mango-list">
+          <v-list-item
+            v-for="item in menu"
+            :class="[{ 'mango-current': item._id == current._id }]"
+            :key="item._id"
+            :disabled="item._id == current._id"
+            @click="$router.push(item._id)"
+          >
+            <v-list-item-icon class="mr-4">
+              <v-icon>{{
+                current.sort >= item.sort
+                  ? "mdi-check-circle-outline"
+                  : "mdi-checkbox-blank-circle-outline"
+              }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>{{ item.title }}</v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+      <v-card class="pa-2 d-flex">
+        <v-btn @click="showDrawer()" icon class="my-2">
+          <v-icon>mdi-format-list-bulleted</v-icon>
+        </v-btn>
+        <h4 class="mango-title">{{ current.title }}</h4>
+      </v-card>
       <div v-if="img.length" class="pa-2">
         <template v-for="item in img">
           <img
@@ -44,17 +76,24 @@ export default {
   },
   data() {
     return {
+      show: false,
       images: [],
       error: false,
       current: false,
       next: false,
       user: false,
-      params: {},
+      params: {}
     };
   },
   computed: {
     img() {
       return this.images.sort((a, b) => a.sort - b.sort);
+    },
+    menu() {
+      return this.$store.getters.menu;
+    },
+    height() {
+      return window.innerHeight - 20;
     },
   },
   async asyncData({ params, redirect }) {
@@ -75,9 +114,6 @@ export default {
     this.images = current.images.src;
     delete this.current.images;
     this.next = next;
-
-    this.$store.commit('title', this.current.title)
-    this.$store.commit('current', this.current)
   },
   beforeMount() {
     this.$store.dispatch("requestMenu", this.params.manga);
@@ -95,19 +131,43 @@ export default {
       const format = linkArr[linkArr.length - 1];
       return format !== "mp4";
     },
+    showDrawer() {
+      if (!this.show)
+        document.querySelector(".mango-current")?.scrollIntoView();
+      this.show = !this.show;
+    },
   },
 };
 </script> 
 
 <style>
-body {
-  background-color: #1e1e1e;
-}
 .w-100 {
   width: 100%;
 }
 .min-height {
   min-height: 144px;
+}
+.mango-list {
+  overflow-y: auto;
+  margin: 10px 0;
+}
+.mango-title {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  white-space: break-spaces;
+}
+.mango-current {
+  border-bottom: 1px solid;
+  border-top: 1px solid;
+}
+.mango-current .v-list-item__icon .v-icon {
+  color: green;
+}
+.mango-current .v-list-item__content {
+  color: #fff;
 }
 .v-sheet.v-card {
   border-radius: 0;
