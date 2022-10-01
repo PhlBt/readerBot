@@ -10,6 +10,7 @@
     "nodemon": "^2.0.19"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "dotenv": "^16.0.1",
     "mongodb": "^4.8.1",
     "node-telegram-bot-api": "^0.58.0"

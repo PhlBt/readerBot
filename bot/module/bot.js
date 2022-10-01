@@ -7,7 +7,7 @@ module.exports = class {
     this.db = db
 
     this.text = {
-      manga: manga => `${manga.name}\n\n${manga.description}\n\n${manga.tags.join(', ')}`,
+      manga: manga => `${manga.name}\n\n${manga.description}`,
       orderResp: text => `Мы получили ваш запрос, как только у нас появится информация по манге ${text} мы пришлем вам сообщение.`,
       start: 'Здесь вы можете читать мангу. \n\nПока что у нас не большой выбор, но мы стараемся это исправить.',
       read: 'Произведения которые вы уже читаете',
