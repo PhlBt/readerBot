@@ -36,8 +36,8 @@ const createPagination = ({ count, limit, page, entity }) => {
   const endIndex = (page + 1) * limit
 
   const button = []
-  if (startIndex > 0) button.push({ text: 'Предыдущая', callback_data: `${entity}@${page - 1}` })
-  if (endIndex < count) button.push({ text: 'Следующая', callback_data: `${entity}@${page + 1}` })
+  if (startIndex > 0) button.push({ text: '⬅️ Предыдущая', callback_data: `${entity}@${page - 1}` })
+  if (endIndex < count) button.push({ text: 'Следующая ➡️', callback_data: `${entity}@${page + 1}` })
 
   return { show, limit, startIndex, endIndex, button, text }
 }

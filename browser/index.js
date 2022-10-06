@@ -16,17 +16,20 @@ app.get('/add', async (req, res) => {
   res.send(result)
 });
 
-// (async () => {
-//   const circle = async () => {
-//     const manga = await db.collection('manga').findOne({ ready: false })
-//     if (manga) {
-//       const parser = new Parser(manga.src, db)
-//       const result = await parser.initManga()
-//       await parser.parseImages()
-//     } else {
-//       await new Promise(r => setTimeout(r, 1000*60*5))
-//       await circle()
-//     }
-//   }
-//   await circle()
-// })();
+(async () => {
+  const circle = async () => {
+    const parser = new Parser('https://readmanga.live/vanpanchmen', db)
+    const result = await parser.initManga()
+    // const manga = await db.collection('manga').findOne()
+    // console.log(manga);
+    // if (manga) {
+    //   const parser = new Parser(manga.src, db)
+    //   const result = await parser.initManga()
+    //   await parser.parseImages()
+    // } else {
+    //   await new Promise(r => setTimeout(r, 1000*60*5))
+    //   await circle()
+    // }
+  }
+  await circle()
+})();

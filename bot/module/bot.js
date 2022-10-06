@@ -8,7 +8,7 @@ module.exports = class {
 
     this.text = {
       manga: manga => `${manga.name}\n\n${manga.description}`,
-      orderResp: text => `Мы получили ваш запрос, как только у нас появится информация по манге ${text} мы пришлем вам сообщение.`,
+      orderResp: text => `Мы получили ваш запрос, как только у нас появится информация по манге "${text}" мы пришлем вам сообщение.`,
       start: 'Здесь вы можете читать мангу. \n\nПока что у нас не большой выбор, но мы стараемся это исправить.',
       read: 'Произведения которые вы уже читаете',
       popular: 'Самые популярные манги',
@@ -16,9 +16,12 @@ module.exports = class {
       order: 'Пришлите нам название или ссылку на мангу которую вы хотите прочитать!\n\nМы сделаем всё что бы ваше желание сбылось! ❤️',
     }
     this.btn = {
-      back: 'Вернуться назад',
-      continue: 'Продолжить чтение',
-      read: 'Читать с начала'
+      back: '↩️ Вернуться назад',
+      continue: '📖 Продолжить чтение',
+      read: '📖 Читать с начала',
+      popular: '👑 Популярные',
+      new: '🆕 Новинки',
+      order: '😎 Заказать мангу',
     }
 
     this.waiter = new Waiter()
@@ -65,10 +68,10 @@ module.exports = class {
       start: ({ msg, command }) => {
         const inline_keyboard = []
 
-        if (this.user.history) inline_keyboard.push([{ text: 'Продолжить чтение', callback_data: 'read@0' }])
-        inline_keyboard.push([{ text: 'Популярные', callback_data: 'popular@0' }, { text: 'Новинки', callback_data: 'new@0' }])
+        if (this.user.history) inline_keyboard.push([{ text: this.btn.continue, callback_data: 'read@0' }])
+        inline_keyboard.push([{ text: this.btn.popular, callback_data: 'popular@0' }, { text: this.btn.new, callback_data: 'new@0' }])
         // inline_keyboard.push([{ text: 'Поиск по названию', callback_data: 'searchName' }, { text: 'Поиск по тегам', callback_data: 'searchTag' }])
-        inline_keyboard.push([{ text: 'Заказать мангу', callback_data: 'order' }])
+        inline_keyboard.push([{ text: this.btn.order, callback_data: 'order' }])
 
         if (command !== 'update')
           this.bot.sendMessage(this.user.id, this.text.start, { reply_markup: { inline_keyboard } })

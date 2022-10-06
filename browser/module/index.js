@@ -1,12 +1,25 @@
 require('dotenv').config({ path: '../.env' });
 const axios = require('axios');
-const FormData = require('form-data');
+const fs = require('fs');
+const webp = require('webp-converter');
+// const FormData = require('form-data');
 const { getNoun } = require('../helper')
 
 const { MongoClient } = require('mongodb');
 const db = new MongoClient(process.env.MONGO_URL).db('default');
 
 const puppeteer = require('puppeteer');
+
+const tempCr = () => {
+  return new Promise((resolve, reject) => {
+    fs.access('../node_modules/webp-converter/temp', (errer) => {
+      if (errer) {
+        fs.mkdirSync('../node_modules/webp-converter/temp')
+        resolve()
+      }
+    })
+  })
+}
 
 module.exports = class {
   constructor(src) {
@@ -30,6 +43,8 @@ module.exports = class {
   }
 
   async initManga() {
+    // await tempCr();
+    // console.log('?');
     let current = await this.getManga({ src: this.src })
     if (!current) {
       const currentManga = await this.parseMangaInfo(async (page) => {
@@ -41,7 +56,7 @@ module.exports = class {
             manga: {
               name: document.querySelector('.name').innerText,
               tags: [...document.querySelectorAll('.elem_tag')].map(item => item.innerText.replace(', ', '')),
-              description: document.querySelector('#tab-description .manga-description').innerText,
+              status: '',
               image: html.querySelector('img').dataset.full
             },
             pages: [...document.querySelectorAll('#chapters-list .item-title')].map(el => {
@@ -54,16 +69,16 @@ module.exports = class {
           }
         })
       })
-
       currentManga.manga.image = await this.uploadImg(currentManga.manga.image)
-      const manga_id = (await db.collection('manga').insertOne({ src: this.src, ready: false, ...currentManga.manga })).insertedId
-      await db.collection('pages').insertMany(currentManga.pages.map(el => { return { manga: manga_id, ...el } }))
+      // console.log(currentManga);
+      // const manga_id = (await db.collection('manga').insertOne({ src: this.src, ready: false, ...currentManga.manga })).insertedId
+      // await db.collection('pages').insertMany(currentManga.pages.map(el => { return { manga: manga_id, ...el } }))
 
-      this.manga = await this.getManga({ src: this.src })
-      return { msg: `Манга ${this.manga.name} добавлена! \nВсего ${currentManga.pages.length} ${getNoun(currentManga.pages.length, 'глава', 'главы', 'глав')}` }
+      // this.manga = await this.getManga({ src: this.src })
+      // return { msg: `Манга ${this.manga.name} добавлена! \nВсего ${currentManga.pages.length} ${getNoun(currentManga.pages.length, 'глава', 'главы', 'глав')}` }
     }
-    this.manga = current
-    return { msg: `Манга ${current.name} уже существует` }
+    // this.manga = current
+    // return { msg: `Манга ${current.name} уже существует` }
   }
 
   async parseImages() {
@@ -232,36 +247,60 @@ module.exports = class {
   }
 
   async uploadImg(item) {
-    const key = await this.thumb.getId()
-    if (!key) return false
-
-    return 'test'
-
-    const img = await axios(item, { responseType: "stream" })
-      .then(response => response.data)
-      .then(response => {
-        const formData = new FormData()
-        formData.append("key", key)
-        formData.append("media", response)
-        return formData
-      }).catch((err) => {
-        console.log('get img error: ', err)
-        return false
-      })
-
-    return (img)
-      ? await axios({
-        url: 'https://thumbsnap.com/api/upload',
-        method: 'POST',
-        data: img,
-        withCredentials: true,
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity,
-        headers: { "content-type": "multipart/form-data" }
-      }).then(res => (res.data.success) ? res.data.data.media : false)
-        .catch(console.error)
-      : false
+    // item = 'https://resz2.rmr.rocks/auto/17/93/28/OPM_t13_g94_01.gif'
+    // const types = {
+    //   'image/gif': 'gif',
+    //   'image/jpeg': 'jpg',
+    //   'image/png': 'png'
+    // }
+    // const img = await axios(item, { responseType: "arraybuffer" })
+    //   .then(response => {
+    //     return {
+    //       type: response.headers['content-type'],
+    //       data: response.data
+    //     }
+    //   }).catch(() => false)
+    // if (img) {
+    //   const webPic = (types[img.type] !== 'gif')
+    //     ? await webp.buffer2webpbuffer(img.data, types[img.type], "-q 80")
+    //     : await webp.gwebp(img.data, types[img.type], "-q 80")
+    //   return (webPic)
+    //     ? fs.createWriteStream('files/gif.webp').write(webPic)
+    //     : false
+    // }
   }
+
+  // async uploadImg(item) {
+  //   const key = await this.thumb.getId()
+  //   if (!key) return false
+
+  //   return 'test'
+
+  //   const img = await axios(item, { responseType: "stream" })
+  //     .then(response => response.data)
+  //     .then(response => {
+  //       const formData = new FormData()
+  //       formData.append("key", key)
+  //       formData.append("media", response)
+  //       return formData
+  //     }).catch((err) => {
+  //       console.log('get img error: ', err)
+  //       return false
+  //     })
+
+  //   return (img)
+  //     ? await axios({
+  //       url: 'https://thumbsnap.com/api/upload',
+  //       method: 'POST',
+  //       data: img,
+  //       withCredentials: true,
+  //       maxContentLength: Infinity,
+  //       maxBodyLength: Infinity,
+  //       headers: { "content-type": "multipart/form-data" }
+  //     }).then(res => (res.data.success) ? res.data.data.media : false)
+  //       .catch(console.error)
+  //     : false
+  // }
 
   getManga(query) {
     return db.collection('manga').findOne(query).then(r => r)
